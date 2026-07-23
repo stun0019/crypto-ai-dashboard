@@ -1,359 +1,37 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
+
   <meta
     name="viewport"
     content="width=device-width, initial-scale=1.0"
-  />
+  >
+
+  <meta
+    name="description"
+    content="BingX USDT 永續合約市場掃描器"
+  >
 
   <title>Crypto AI Dashboard</title>
 
-  <style>
-    :root {
-      color-scheme: dark;
-
-      --bg: #090d14;
-      --panel: #111722;
-      --panel-soft: #161e2c;
-      --border: #253044;
-      --text: #f3f6fb;
-      --muted: #8f9bb0;
-      --green: #23c483;
-      --red: #ff5c73;
-      --yellow: #f6c453;
-      --blue: #5294ff;
-      --shadow: 0 12px 30px rgba(0, 0, 0, 0.24);
-    }
-
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      min-height: 100vh;
-      background:
-        radial-gradient(circle at top right, rgba(82, 148, 255, 0.08), transparent 30%),
-        var(--bg);
-      color: var(--text);
-      font-family:
-        Inter,
-        -apple-system,
-        BlinkMacSystemFont,
-        "Segoe UI",
-        sans-serif;
-    }
-
-    button,
-    input,
-    select {
-      font: inherit;
-    }
-
-    .container {
-      width: min(1500px, calc(100% - 32px));
-      margin: 0 auto;
-      padding: 32px 0 48px;
-    }
-
-    .header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 24px;
-      margin-bottom: 24px;
-    }
-
-    .title-area h1 {
-      margin: 0 0 8px;
-      font-size: clamp(26px, 3vw, 38px);
-      line-height: 1.2;
-    }
-
-    .title-area p {
-      margin: 0;
-      color: var(--muted);
-      line-height: 1.6;
-    }
-
-    .refresh-button {
-      min-height: 44px;
-      padding: 0 18px;
-      border: 1px solid var(--blue);
-      border-radius: 10px;
-      background: var(--blue);
-      color: white;
-      font-weight: 700;
-      cursor: pointer;
-      transition:
-        transform 0.15s ease,
-        opacity 0.15s ease;
-    }
-
-    .refresh-button:hover {
-      transform: translateY(-1px);
-    }
-
-    .refresh-button:disabled {
-      cursor: not-allowed;
-      opacity: 0.55;
-      transform: none;
-    }
-
-    .summary-grid {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 16px;
-      margin-bottom: 20px;
-    }
-
-    .summary-card {
-      min-height: 116px;
-      padding: 18px;
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      background: linear-gradient(145deg, var(--panel), var(--panel-soft));
-      box-shadow: var(--shadow);
-    }
-
-    .summary-label {
-      margin-bottom: 12px;
-      color: var(--muted);
-      font-size: 13px;
-    }
-
-    .summary-value {
-      font-size: 26px;
-      font-weight: 800;
-      line-height: 1.2;
-    }
-
-    .summary-note {
-      margin-top: 8px;
-      color: var(--muted);
-      font-size: 12px;
-    }
-
-    .status-online {
-      color: var(--green);
-    }
-
-    .status-loading {
-      color: var(--yellow);
-    }
-
-    .status-error {
-      color: var(--red);
-    }
-
-    .toolbar {
-      display: grid;
-      grid-template-columns: minmax(240px, 1fr) 220px;
-      gap: 12px;
-      padding: 16px;
-      margin-bottom: 16px;
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      background: var(--panel);
-    }
-
-    .control {
-      width: 100%;
-      min-height: 44px;
-      padding: 0 14px;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      outline: none;
-      background: #0d131d;
-      color: var(--text);
-    }
-
-    .control:focus {
-      border-color: var(--blue);
-      box-shadow: 0 0 0 3px rgba(82, 148, 255, 0.12);
-    }
-
-    .message {
-      display: none;
-      padding: 16px;
-      margin-bottom: 16px;
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      line-height: 1.6;
-    }
-
-    .message.visible {
-      display: block;
-    }
-
-    .message.error {
-      border-color: rgba(255, 92, 115, 0.4);
-      background: rgba(255, 92, 115, 0.08);
-      color: #ff9cac;
-    }
-
-    .message.info {
-      border-color: rgba(82, 148, 255, 0.4);
-      background: rgba(82, 148, 255, 0.08);
-      color: #a9c8ff;
-    }
-
-    .table-card {
-      overflow: hidden;
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      background: var(--panel);
-      box-shadow: var(--shadow);
-    }
-
-    .table-wrapper {
-      overflow-x: auto;
-    }
-
-    table {
-      width: 100%;
-      min-width: 1100px;
-      border-collapse: collapse;
-    }
-
-    thead {
-      background: #151d2a;
-    }
-
-    th,
-    td {
-      padding: 14px 16px;
-      border-bottom: 1px solid var(--border);
-      text-align: right;
-      white-space: nowrap;
-    }
-
-    th {
-      color: var(--muted);
-      font-size: 12px;
-      font-weight: 700;
-      letter-spacing: 0.03em;
-      text-transform: uppercase;
-      user-select: none;
-    }
-
-    th.sortable {
-      cursor: pointer;
-    }
-
-    th.sortable:hover {
-      color: var(--text);
-    }
-
-    th:first-child,
-    th:nth-child(2),
-    th:nth-child(3),
-    td:first-child,
-    td:nth-child(2),
-    td:nth-child(3) {
-      text-align: left;
-    }
-
-    tbody tr {
-      transition: background 0.15s ease;
-    }
-
-    tbody tr:hover {
-      background: rgba(255, 255, 255, 0.025);
-    }
-
-    tbody tr:last-child td {
-      border-bottom: 0;
-    }
-
-    .symbol {
-      font-weight: 800;
-    }
-
-    .tv-symbol {
-      color: var(--muted);
-      font-size: 13px;
-    }
-
-    .positive {
-      color: var(--green);
-      font-weight: 700;
-    }
-
-    .negative {
-      color: var(--red);
-      font-weight: 700;
-    }
-
-    .neutral {
-      color: var(--muted);
-    }
-
-    .rank {
-      color: var(--muted);
-    }
-
-    .empty-cell {
-      padding: 50px 20px;
-      color: var(--muted);
-      text-align: center !important;
-    }
-
-    .footer {
-      margin-top: 18px;
-      color: var(--muted);
-      font-size: 12px;
-      line-height: 1.6;
-      text-align: center;
-    }
-
-    @media (max-width: 900px) {
-      .header {
-        flex-direction: column;
-      }
-
-      .refresh-button {
-        width: 100%;
-      }
-
-      .summary-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-
-      .toolbar {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    @media (max-width: 560px) {
-      .container {
-        width: min(100% - 20px, 1500px);
-        padding-top: 20px;
-      }
-
-      .summary-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .summary-card {
-        min-height: auto;
-      }
-    }
-  </style>
+  <link rel="stylesheet" href="./styles.css">
 </head>
 
 <body>
   <main class="container">
-    <header class="header">
-      <div class="title-area">
+    <header class="page-header">
+      <div>
+        <p class="eyebrow">BingX Futures Market Scanner</p>
         <h1>Crypto AI Dashboard</h1>
-        <p>BingX USDT 永續合約市場掃描器 V0.1</p>
+        <p class="subtitle">
+          掃描 BingX USDT 永續合約市場
+        </p>
       </div>
 
       <button
         id="refreshButton"
-        class="refresh-button"
+        class="primary-button"
         type="button"
       >
         重新整理
@@ -362,121 +40,144 @@
 
     <section class="summary-grid">
       <article class="summary-card">
-        <div class="summary-label">API 狀態</div>
-        <div
+        <span class="summary-label">API 狀態</span>
+
+        <strong
           id="apiStatus"
-          class="summary-value status-loading"
+          class="summary-value status-idle"
         >
           等待連線
-        </div>
-        <div
+        </strong>
+
+        <span
           id="apiStatusNote"
           class="summary-note"
         >
-          尚未取得資料
-        </div>
+          尚未讀取資料
+        </span>
       </article>
 
       <article class="summary-card">
-        <div class="summary-label">USDT 合約總數</div>
-        <div
+        <span class="summary-label">USDT 合約總數</span>
+
+        <strong
           id="totalContracts"
           class="summary-value"
         >
           0
-        </div>
-        <div class="summary-note">符合 XXX-USDT 格式</div>
+        </strong>
+
+        <span class="summary-note">
+          BingX 永續合約
+        </span>
       </article>
 
       <article class="summary-card">
-        <div class="summary-label">目前顯示</div>
-        <div
+        <span class="summary-label">目前顯示</span>
+
+        <strong
           id="visibleContracts"
           class="summary-value"
         >
           0
-        </div>
-        <div class="summary-note">依搜尋條件篩選</div>
+        </strong>
+
+        <span class="summary-note">
+          搜尋與篩選結果
+        </span>
       </article>
 
       <article class="summary-card">
-        <div class="summary-label">最後更新</div>
-        <div
+        <span class="summary-label">最後更新</span>
+
+        <strong
           id="lastUpdated"
-          class="summary-value"
-          style="font-size: 18px"
+          class="summary-value summary-time"
         >
           尚未更新
-        </div>
-        <div class="summary-note">資料來自 BingX 公開 API</div>
+        </strong>
+
+        <span class="summary-note">
+          本機時間
+        </span>
       </article>
     </section>
 
     <section class="toolbar">
-      <input
-        id="searchInput"
-        class="control"
-        type="search"
-        placeholder="搜尋 BTC、ETH、SOL..."
-        autocomplete="off"
-      />
+      <label class="control-group">
+        <span>搜尋標的</span>
 
-      <select
-        id="sortSelect"
-        class="control"
-        aria-label="排序方式"
-      >
-        <option value="quoteVolume-desc">成交額：高到低</option>
-        <option value="quoteVolume-asc">成交額：低到高</option>
-        <option value="change-desc">漲跌幅：高到低</option>
-        <option value="change-asc">漲跌幅：低到高</option>
-        <option value="price-desc">價格：高到低</option>
-        <option value="price-asc">價格：低到高</option>
-        <option value="symbol-asc">幣種：A 到 Z</option>
-        <option value="symbol-desc">幣種：Z 到 A</option>
-      </select>
+        <input
+          id="searchInput"
+          class="control"
+          type="search"
+          placeholder="搜尋 BTC、ETH、SOL..."
+          autocomplete="off"
+        >
+      </label>
+
+      <label class="control-group">
+        <span>排序方式</span>
+
+        <select
+          id="sortSelect"
+          class="control"
+        >
+          <option value="quoteVolume-desc">
+            24H 成交額：高到低
+          </option>
+
+          <option value="quoteVolume-asc">
+            24H 成交額：低到高
+          </option>
+
+          <option value="change-desc">
+            24H 漲跌：高到低
+          </option>
+
+          <option value="change-asc">
+            24H 漲跌：低到高
+          </option>
+
+          <option value="price-desc">
+            最新價格：高到低
+          </option>
+
+          <option value="price-asc">
+            最新價格：低到高
+          </option>
+
+          <option value="symbol-asc">
+            幣種：A 到 Z
+          </option>
+
+          <option value="symbol-desc">
+            幣種：Z 到 A
+          </option>
+        </select>
+      </label>
     </section>
 
-    <div
-      id="message"
-      class="message"
-      role="alert"
-    ></div>
+    <section
+      id="messageBox"
+      class="message-box"
+      aria-live="polite"
+    ></section>
 
     <section class="table-card">
-      <div class="table-wrapper">
+      <div class="table-scroll">
         <table>
           <thead>
             <tr>
               <th>#</th>
-              <th
-                class="sortable"
-                data-sort="symbol"
-              >
-                BingX Symbol
-              </th>
+              <th>幣種</th>
               <th>TradingView</th>
-              <th
-                class="sortable"
-                data-sort="price"
-              >
-                最新價格
-              </th>
-              <th
-                class="sortable"
-                data-sort="change"
-              >
-                24H 漲跌
-              </th>
+              <th>最新價格</th>
+              <th>24H 漲跌</th>
               <th>24H 最高</th>
               <th>24H 最低</th>
-              <th>成交量</th>
-              <th
-                class="sortable"
-                data-sort="quoteVolume"
-              >
-                成交額
-              </th>
+              <th>24H 成交量</th>
+              <th>24H 成交額</th>
             </tr>
           </thead>
 
@@ -494,677 +195,11 @@
       </div>
     </section>
 
-    <footer class="footer">
-      本頁僅展示公開市場資料，不構成投資建議，也不具備下單功能。
+    <footer class="page-footer">
+      公開市場資料僅供分析與測試，不構成投資建議。
     </footer>
   </main>
 
-  <script>
-    "use strict";
-
-    const API_BASE_URL = "https://open-api.bingx.com";
-
-    const ENDPOINTS = {
-      contracts: "/openApi/swap/v2/quote/contracts",
-      tickers: "/openApi/swap/v2/quote/ticker"
-    };
-
-    const state = {
-      markets: [],
-      filteredMarkets: [],
-      searchTerm: "",
-      sortKey: "quoteVolume",
-      sortDirection: "desc",
-      loading: false
-    };
-
-    const elements = {
-      refreshButton: document.getElementById("refreshButton"),
-      searchInput: document.getElementById("searchInput"),
-      sortSelect: document.getElementById("sortSelect"),
-      apiStatus: document.getElementById("apiStatus"),
-      apiStatusNote: document.getElementById("apiStatusNote"),
-      totalContracts: document.getElementById("totalContracts"),
-      visibleContracts: document.getElementById("visibleContracts"),
-      lastUpdated: document.getElementById("lastUpdated"),
-      message: document.getElementById("message"),
-      marketTableBody: document.getElementById("marketTableBody")
-    };
-
-    function toNumber(value) {
-      if (value === null || value === undefined || value === "") {
-        return null;
-      }
-
-      const number = Number(value);
-      return Number.isFinite(number) ? number : null;
-    }
-
-    function getFirstNumber(object, keys) {
-      for (const key of keys) {
-        const value = toNumber(object?.[key]);
-
-        if (value !== null) {
-          return value;
-        }
-      }
-
-      return null;
-    }
-
-    function getFirstText(object, keys) {
-      for (const key of keys) {
-        const value = object?.[key];
-
-        if (typeof value === "string" && value.trim()) {
-          return value.trim();
-        }
-      }
-
-      return "";
-    }
-
-    function extractArray(payload) {
-      if (Array.isArray(payload)) {
-        return payload;
-      }
-
-      if (Array.isArray(payload?.data)) {
-        return payload.data;
-      }
-
-      if (Array.isArray(payload?.data?.data)) {
-        return payload.data.data;
-      }
-
-      if (Array.isArray(payload?.data?.list)) {
-        return payload.data.list;
-      }
-
-      if (Array.isArray(payload?.list)) {
-        return payload.list;
-      }
-
-      return [];
-    }
-
-    async function fetchJson(path, timeoutMs = 12000) {
-      const controller = new AbortController();
-      const timeoutId = window.setTimeout(
-        () => controller.abort(),
-        timeoutMs
-      );
-
-      try {
-        const response = await fetch(
-          `${API_BASE_URL}${path}`,
-          {
-            method: "GET",
-            headers: {
-              Accept: "application/json"
-            },
-            cache: "no-store",
-            signal: controller.signal
-          }
-        );
-
-        if (!response.ok) {
-          throw new Error(
-            `HTTP ${response.status} ${response.statusText}`
-          );
-        }
-
-        const payload = await response.json();
-
-        const apiCode =
-          payload?.code ??
-          payload?.data?.code;
-
-        if (
-          apiCode !== undefined &&
-          Number(apiCode) !== 0
-        ) {
-          throw new Error(
-            payload?.msg ||
-            payload?.message ||
-            `BingX API 錯誤代碼：${apiCode}`
-          );
-        }
-
-        return payload;
-      } catch (error) {
-        if (error.name === "AbortError") {
-          throw new Error("API 請求逾時，請稍後重試。");
-        }
-
-        throw error;
-      } finally {
-        window.clearTimeout(timeoutId);
-      }
-    }
-
-    async function getContracts() {
-      const payload = await fetchJson(ENDPOINTS.contracts);
-      return extractArray(payload);
-    }
-
-    async function getTickers() {
-      const payload = await fetchJson(ENDPOINTS.tickers);
-      return extractArray(payload);
-    }
-
-    function normalizeSymbol(value) {
-      return String(value || "")
-        .trim()
-        .toUpperCase();
-    }
-
-    function isUsdtContract(contract) {
-      const symbol = normalizeSymbol(
-        getFirstText(contract, [
-          "symbol",
-          "tradePair",
-          "contractSymbol"
-        ])
-      );
-
-      if (!/^[A-Z0-9]+-USDT$/.test(symbol)) {
-        return false;
-      }
-
-      const status = String(
-        contract?.status ??
-        contract?.tradeStatus ??
-        contract?.state ??
-        ""
-      ).toUpperCase();
-
-      const explicitlyDisabled = [
-        "OFFLINE",
-        "SUSPENDED",
-        "DISABLED",
-        "DELISTED",
-        "CLOSED"
-      ].includes(status);
-
-      return !explicitlyDisabled;
-    }
-
-    function normalizeTicker(ticker) {
-      const symbol = normalizeSymbol(
-        getFirstText(ticker, [
-          "symbol",
-          "tradePair",
-          "contractSymbol"
-        ])
-      );
-
-      const lastPrice = getFirstNumber(ticker, [
-        "lastPrice",
-        "last",
-        "closePrice",
-        "close",
-        "price"
-      ]);
-
-      const openPrice = getFirstNumber(ticker, [
-        "openPrice",
-        "open"
-      ]);
-
-      let change = getFirstNumber(ticker, [
-        "priceChangePercent",
-        "changePercent",
-        "priceChangeRate",
-        "changeRate",
-        "priceChange"
-      ]);
-
-      if (
-        change === null &&
-        lastPrice !== null &&
-        openPrice !== null &&
-        openPrice !== 0
-      ) {
-        change = ((lastPrice - openPrice) / openPrice) * 100;
-      }
-
-      /*
-       * 部分 API 可能以小數表示漲跌率，例如 0.0123 = 1.23%。
-       * 欄位名稱包含 rate 時通常需要乘以 100。
-       */
-      const rateValue = getFirstNumber(ticker, [
-        "priceChangeRate",
-        "changeRate"
-      ]);
-
-      if (
-        rateValue !== null &&
-        Math.abs(rateValue) <= 1
-      ) {
-        change = rateValue * 100;
-      }
-
-      return {
-        symbol,
-        lastPrice,
-        change,
-        highPrice: getFirstNumber(ticker, [
-          "highPrice",
-          "high"
-        ]),
-        lowPrice: getFirstNumber(ticker, [
-          "lowPrice",
-          "low"
-        ]),
-        volume: getFirstNumber(ticker, [
-          "volume",
-          "baseVolume",
-          "vol"
-        ]),
-        quoteVolume: getFirstNumber(ticker, [
-          "quoteVolume",
-          "turnover",
-          "amount",
-          "quoteVol"
-        ])
-      };
-    }
-
-    function mergeMarketData(contracts, tickers) {
-      const tickerMap = new Map();
-
-      tickers
-        .map(normalizeTicker)
-        .filter((ticker) => ticker.symbol)
-        .forEach((ticker) => {
-          tickerMap.set(ticker.symbol, ticker);
-        });
-
-      return contracts
-        .filter(isUsdtContract)
-        .map((contract) => {
-          const symbol = normalizeSymbol(
-            getFirstText(contract, [
-              "symbol",
-              "tradePair",
-              "contractSymbol"
-            ])
-          );
-
-          const ticker = tickerMap.get(symbol) || {};
-
-          return {
-            symbol,
-            tradingViewSymbol:
-              symbol.replace("-", "") + ".P",
-            lastPrice: ticker.lastPrice ?? null,
-            change: ticker.change ?? null,
-            highPrice: ticker.highPrice ?? null,
-            lowPrice: ticker.lowPrice ?? null,
-            volume: ticker.volume ?? null,
-            quoteVolume: ticker.quoteVolume ?? null
-          };
-        })
-        .filter((market) => market.symbol);
-    }
-
-    function formatPrice(value) {
-      if (!Number.isFinite(value)) {
-        return "—";
-      }
-
-      if (value >= 1000) {
-        return value.toLocaleString("en-US", {
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2
-        });
-      }
-
-      if (value >= 1) {
-        return value.toLocaleString("en-US", {
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 6
-        });
-      }
-
-      return value.toLocaleString("en-US", {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 10
-      });
-    }
-
-    function formatCompact(value) {
-      if (!Number.isFinite(value)) {
-        return "—";
-      }
-
-      return new Intl.NumberFormat("zh-TW", {
-        notation: "compact",
-        maximumFractionDigits: 2
-      }).format(value);
-    }
-
-    function formatPercent(value) {
-      if (!Number.isFinite(value)) {
-        return "—";
-      }
-
-      const prefix = value > 0 ? "+" : "";
-
-      return `${prefix}${value.toFixed(2)}%`;
-    }
-
-    function getChangeClass(value) {
-      if (!Number.isFinite(value) || value === 0) {
-        return "neutral";
-      }
-
-      return value > 0 ? "positive" : "negative";
-    }
-
-    function compareNullableNumbers(a, b, direction) {
-      const aValid = Number.isFinite(a);
-      const bValid = Number.isFinite(b);
-
-      if (!aValid && !bValid) {
-        return 0;
-      }
-
-      if (!aValid) {
-        return 1;
-      }
-
-      if (!bValid) {
-        return -1;
-      }
-
-      return direction === "asc"
-        ? a - b
-        : b - a;
-    }
-
-    function applyFiltersAndSort() {
-      const keyword = state.searchTerm.trim().toUpperCase();
-
-      state.filteredMarkets = state.markets.filter(
-        (market) => {
-          if (!keyword) {
-            return true;
-          }
-
-          return (
-            market.symbol.includes(keyword) ||
-            market.tradingViewSymbol.includes(keyword)
-          );
-        }
-      );
-
-      state.filteredMarkets.sort((a, b) => {
-        if (state.sortKey === "symbol") {
-          const result = a.symbol.localeCompare(b.symbol);
-
-          return state.sortDirection === "asc"
-            ? result
-            : -result;
-        }
-
-        const keyMap = {
-          price: "lastPrice",
-          change: "change",
-          quoteVolume: "quoteVolume"
-        };
-
-        const actualKey =
-          keyMap[state.sortKey] || state.sortKey;
-
-        return compareNullableNumbers(
-          a[actualKey],
-          b[actualKey],
-          state.sortDirection
-        );
-      });
-
-      renderTable();
-      updateSummary();
-    }
-
-    function renderTable() {
-      if (state.loading) {
-        elements.marketTableBody.innerHTML = `
-          <tr>
-            <td class="empty-cell" colspan="9">
-              正在連接 BingX 並取得市場資料……
-            </td>
-          </tr>
-        `;
-        return;
-      }
-
-      if (state.filteredMarkets.length === 0) {
-        elements.marketTableBody.innerHTML = `
-          <tr>
-            <td class="empty-cell" colspan="9">
-              沒有符合條件的 USDT 永續合約
-            </td>
-          </tr>
-        `;
-        return;
-      }
-
-      elements.marketTableBody.innerHTML =
-        state.filteredMarkets
-          .map((market, index) => {
-            return `
-              <tr>
-                <td class="rank">${index + 1}</td>
-
-                <td>
-                  <span class="symbol">
-                    ${escapeHtml(market.symbol)}
-                  </span>
-                </td>
-
-                <td>
-                  <span class="tv-symbol">
-                    ${escapeHtml(market.tradingViewSymbol)}
-                  </span>
-                </td>
-
-                <td>${formatPrice(market.lastPrice)}</td>
-
-                <td class="${getChangeClass(market.change)}">
-                  ${formatPercent(market.change)}
-                </td>
-
-                <td>${formatPrice(market.highPrice)}</td>
-
-                <td>${formatPrice(market.lowPrice)}</td>
-
-                <td>${formatCompact(market.volume)}</td>
-
-                <td>${formatCompact(market.quoteVolume)}</td>
-              </tr>
-            `;
-          })
-          .join("");
-    }
-
-    function escapeHtml(value) {
-      return String(value)
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
-    }
-
-    function updateSummary() {
-      elements.totalContracts.textContent =
-        state.markets.length.toLocaleString("zh-TW");
-
-      elements.visibleContracts.textContent =
-        state.filteredMarkets.length.toLocaleString("zh-TW");
-    }
-
-    function setApiStatus(status, note = "") {
-      elements.apiStatus.className = "summary-value";
-
-      if (status === "loading") {
-        elements.apiStatus.textContent = "連線中";
-        elements.apiStatus.classList.add("status-loading");
-      } else if (status === "online") {
-        elements.apiStatus.textContent = "已連線";
-        elements.apiStatus.classList.add("status-online");
-      } else {
-        elements.apiStatus.textContent = "連線失敗";
-        elements.apiStatus.classList.add("status-error");
-      }
-
-      elements.apiStatusNote.textContent = note;
-    }
-
-    function showMessage(text, type = "error") {
-      elements.message.textContent = text;
-      elements.message.className =
-        `message visible ${type}`;
-    }
-
-    function hideMessage() {
-      elements.message.textContent = "";
-      elements.message.className = "message";
-    }
-
-    function setLoading(isLoading) {
-      state.loading = isLoading;
-      elements.refreshButton.disabled = isLoading;
-      elements.refreshButton.textContent =
-        isLoading ? "讀取中…" : "重新整理";
-
-      renderTable();
-    }
-
-    async function loadMarketData() {
-      hideMessage();
-      setLoading(true);
-      setApiStatus("loading", "正在請求公開市場資料");
-
-      try {
-        const [contracts, tickers] = await Promise.all([
-          getContracts(),
-          getTickers()
-        ]);
-
-        if (contracts.length === 0) {
-          throw new Error("合約 API 沒有回傳有效資料。");
-        }
-
-        state.markets = mergeMarketData(
-          contracts,
-          tickers
-        );
-
-        if (state.markets.length === 0) {
-          throw new Error(
-            "成功取得 API 回應，但沒有找到 XXX-USDT 永續合約。"
-          );
-        }
-
-        const now = new Date();
-
-        elements.lastUpdated.textContent =
-          now.toLocaleString("zh-TW", {
-            hour12: false
-          });
-
-        setApiStatus(
-          "online",
-          `已取得 ${state.markets.length} 個 USDT 合約`
-        );
-
-        applyFiltersAndSort();
-      } catch (error) {
-        console.error("BingX API error:", error);
-
-        state.markets = [];
-        state.filteredMarkets = [];
-
-        setApiStatus("error", "請查看錯誤訊息");
-
-        let message =
-          error instanceof Error
-            ? error.message
-            : "發生未知錯誤";
-
-        if (
-          message.includes("Failed to fetch") ||
-          message.includes("NetworkError")
-        ) {
-          message =
-            "瀏覽器無法直接讀取 BingX API。可能是 CORS 或網路限制。下一步需要加入後端 Proxy。";
-        }
-
-        showMessage(message, "error");
-        updateSummary();
-        renderTable();
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    elements.searchInput.addEventListener(
-      "input",
-      (event) => {
-        state.searchTerm = event.target.value;
-        applyFiltersAndSort();
-      }
-    );
-
-    elements.sortSelect.addEventListener(
-      "change",
-      (event) => {
-        const [sortKey, sortDirection] =
-          event.target.value.split("-");
-
-        state.sortKey = sortKey;
-        state.sortDirection = sortDirection;
-
-        applyFiltersAndSort();
-      }
-    );
-
-    document
-      .querySelectorAll("th.sortable")
-      .forEach((header) => {
-        header.addEventListener("click", () => {
-          const requestedKey = header.dataset.sort;
-
-          if (state.sortKey === requestedKey) {
-            state.sortDirection =
-              state.sortDirection === "asc"
-                ? "desc"
-                : "asc";
-          } else {
-            state.sortKey = requestedKey;
-            state.sortDirection =
-              requestedKey === "symbol"
-                ? "asc"
-                : "desc";
-          }
-
-          elements.sortSelect.value =
-            `${state.sortKey}-${state.sortDirection}`;
-
-          applyFiltersAndSort();
-        });
-      });
-
-    elements.refreshButton.addEventListener(
-      "click",
-      loadMarketData
-    );
-
-    loadMarketData();
-  </script>
+  <script src="./app.js"></script>
 </body>
 </html>
